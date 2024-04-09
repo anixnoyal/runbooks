@@ -9,7 +9,7 @@ curl -sfL https://get.k3s.io | sh -
 export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 
 #setup proxy
-sudo nano /etc/systemd/system/k3s.service
+vi /etc/systemd/system/k3s.service
 Environment="HTTP_PROXY=http://your-proxy-server:port"
 Environment="HTTPS_PROXY=https://your-proxy-server:port"
 Environment="NO_PROXY=localhost,127.0.0.1"
