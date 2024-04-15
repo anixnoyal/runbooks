@@ -5,7 +5,10 @@ setenforce 0
 sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
 
 ##############################  k3s ##############################
-curl -sfL https://get.k3s.io | sh -
+curl -sfL https://get.k3s.io | sh -s - server \
+  --bind-address <Your-System-IP> \
+  --advertise-address <Your-System-IP>
+
 export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 
 #setup proxy
@@ -15,6 +18,21 @@ Environment="HTTPS_PROXY=https://your-proxy-server:port"
 Environment="NO_PROXY=localhost,127.0.0.1"
 sudo systemctl daemon-reload
 sudo systemctl restart k3s
+
+
+
+#dns issue
+kubectl get pods -n kube-system | grep coredns
+kubectl logs -n kube-system <coredns-pod-name>
+kubectl describe configmap coredns -n kube-system
+
+#restart coredns
+kubectl rollout restart deployment coredns -n kube-system
+#check dns
+kubectl run -it --rm --restart=Never busybox --image=busybox sh
+# Inside the container run:
+nslookup kubernetes.default
+
 
 ##############################  kind ##############################
 curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.11.1/kind-$(uname)-amd64"
