@@ -34,6 +34,12 @@ kubectl run -it --rm --restart=Never busybox --image=busybox sh
 nslookup kubernetes.default
 
 
+#backup 
+kubectl get configmap coredns -n kube-system -o yaml > coredns-config-backup.yaml
+kubectl edit configmap coredns -n kube-system
+kubectl delete pods -n kube-system -l k8s-app=kube-dns
+
+
 ##############################  kind ##############################
 curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.11.1/kind-$(uname)-amd64"
 chmod +x ./kind
