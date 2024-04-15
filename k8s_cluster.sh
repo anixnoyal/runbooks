@@ -6,8 +6,8 @@ sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
 
 ##############################  k3s ##############################
 curl -sfL https://get.k3s.io | sh -s - server \
-  --bind-address <Your-System-IP> \
-  --advertise-address <Your-System-IP>
+  --bind-address $(hostname -I) \
+  --advertise-address $(hostname -I)
 
 export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 
@@ -16,10 +16,8 @@ vi /etc/systemd/system/k3s.service
 Environment="HTTP_PROXY=http://your-proxy-server:port"
 Environment="HTTPS_PROXY=https://your-proxy-server:port"
 Environment="NO_PROXY=localhost,127.0.0.1"
-sudo systemctl daemon-reload
-sudo systemctl restart k3s
-
-
+systemctl daemon-reload
+systemctl restart k3s
 
 #dns issue
 kubectl get pods -n kube-system | grep coredns
